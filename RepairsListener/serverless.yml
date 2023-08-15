@@ -12,7 +12,7 @@ provider:
   region: eu-west-2
 
 package:
-  artifact: ./bin/release/netcoreapp3.1/repairs-listener.zip
+  artifact: ./bin/release/net6.0/repairs-listener.zip
 
 functions:
   RepairsListener:
