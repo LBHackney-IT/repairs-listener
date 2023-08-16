@@ -28,7 +28,7 @@ namespace RepairsListener.Tests.UseCase
             _fixture = new Fixture();
 
             _mockGateway = new Mock<IDbEntityGateway>();
-            _sut = new CreateAssetUseCase(_mockGateway.Object);
+            _sut = new CreateAssetUseCase();
 
             _domainEntity = _fixture.Create<DomainEntity>();
             _message = CreateMessage(_domainEntity.Id);
@@ -36,7 +36,7 @@ namespace RepairsListener.Tests.UseCase
             _mockGateway.Setup(x => x.GetEntityAsync(_domainEntity.Id)).ReturnsAsync(_domainEntity);
         }
 
-        private EntityEventSns CreateMessage(Guid id, string eventType = EventTypes.DoSomethingEvent)
+        private EntityEventSns CreateMessage(Guid id, string eventType = EventTypes.AssetCreatedEvent)
         {
             return _fixture.Build<EntityEventSns>()
                            .With(x => x.EntityId, id)
