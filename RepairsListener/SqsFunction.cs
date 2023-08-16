@@ -95,13 +95,10 @@ namespace RepairsListener
                         case EventTypes.AssetUpdatedEvent:
                             {
                                 LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
-                                LambdaLogger.Log($"Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-                                LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING")}");
                                 Environment.Exit(0);
                                 break;
                             };
 
-                        // TODO - Implement other message types here...
                         default:
                             throw new ArgumentException($"Unknown event type: {entityEvent.EventType} on message id: {message.MessageId}");
                     }
@@ -111,7 +108,7 @@ namespace RepairsListener
                 catch (Exception ex)
                 {
                     Logger.LogError(ex, $"Exception processing message id: {message.MessageId}; type: {entityEvent.EventType}; entity id: {entityEvent.EntityId}");
-                    throw; // AWS will handle retry/moving to the dead letter queue
+                    throw;
                 }
             }
         }
