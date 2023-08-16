@@ -169,7 +169,7 @@ workflows:
               only: develop
       - build-and-test:
           context: api-nuget-token-context
-            filters:
+          filters:
             branches:
               only: develop
       - assume-role-development:
