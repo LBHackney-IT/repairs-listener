@@ -166,26 +166,26 @@ workflows:
           context: api-nuget-token-context
       - build-and-test:
           context: api-nuget-token-context
-     - assume-role-development:
-         context: api-assume-role-housing-development-context
-         requires:
-           - build-and-test
-         filters:
-           branches:
-             only: develop
-     - terraform-init-and-apply-to-development:
-         requires:
-           - assume-role-development
-         filters:
-           branches:
-             only: develop
-     - deploy-to-development:
-         context: api-nuget-token-context
-         requires:
-           - terraform-init-and-apply-to-development
-         filters:
-           branches:
-             only: develop
+      - assume-role-development:
+          context: api-assume-role-housing-development-context
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: develop
+      - terraform-init-and-apply-to-development:
+          requires:
+            - assume-role-development
+          filters:
+            branches:
+              only: develop
+      - deploy-to-development:
+          context: api-nuget-token-context
+          requires:
+            - terraform-init-and-apply-to-development
+          filters:
+            branches:
+              only: develop
   check-and-deploy-staging-and-production:
      jobs:
      - check-code-formatting:
