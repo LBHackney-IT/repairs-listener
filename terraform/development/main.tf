@@ -42,10 +42,10 @@ terraform {
 
 ### This is the parameter containing the arn of the topic to which we want to subscribe
 ### This will have been created by the service the generates the events in which we are interested
-#
-# data "aws_ssm_parameter" "SOME-SOURCE-DOMAIN_sns_topic_arn" {
-#   name = "/sns-topic/development/SOME-SOURCE-DOMAIN/arn"
-# }
+
+data "aws_ssm_parameter" "assets_sns_topic_arn" {
+   name = "/sns-topic/development/asset/arn"
+}
 
 ### This is the definition of the dead letter queue used whem message processsing fails for a given message
 #
