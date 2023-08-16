@@ -96,7 +96,7 @@ namespace RepairsListener
                             {
                                 LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
                                 LambdaLogger.Log($"Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-                                LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING")}");
+                                LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING").GetHashCode()}");
                                 break;
                             };
 
