@@ -1,15 +1,21 @@
 service: repairs-listener
 provider:
+provider:
   name: aws
   runtime: dotnet6
   memorySize: 2048
-  tracing:
-    lambda: true
-    apiGateway: true
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
-  account: ${opt:account}
   region: eu-west-2
+  timeout: 15
+  usagePlan:
+    - secureAccess:
+        throttle:
+          burstLimit: 200
+          rateLimit: 100
+  tracing:
+    lambda: true
+  versionFunctions: false
 
 package:
   artifact: ./bin/release/net6.0/repairs-listener.zip
