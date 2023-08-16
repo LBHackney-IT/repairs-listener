@@ -164,8 +164,14 @@ workflows:
     jobs:
       - check-code-formatting:
           context: api-nuget-token-context
+          filters:
+            branches:
+              only: develop
       - build-and-test:
           context: api-nuget-token-context
+            filters:
+            branches:
+              only: develop
       - assume-role-development:
           context: api-assume-role-housing-development-context
           requires:
