@@ -1,6 +1,5 @@
 service: repairs-listener
 provider:
-provider:
   name: aws
   runtime: dotnet6
   memorySize: 2048
