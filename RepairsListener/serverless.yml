@@ -31,7 +31,7 @@ functions:
     events:
       ### Specify the parameter containing the queue arn used to trigget the lambda function here
       ### This will have been defined in the terraform configuration
-       - sqs: ${ssm:/sqs-queue/${self:provider.stage}/assets/arn} 
+       - sqs: ${ssm:/sqs-queue/${self:provider.stage}/repairshubinbound/arn} 
       
 resources:
   Resources:
