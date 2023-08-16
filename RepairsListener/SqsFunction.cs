@@ -90,7 +90,16 @@ namespace RepairsListener
                             {
                                 processor = ServiceProvider.GetService<ICreateAssetUseCase>();
                                 break;
-                            }
+                            };
+
+                        case EventTypes.AssetUpdatedEvent:
+                            {
+                                LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
+                                LambdaLogger.Log($"Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+                                LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING")}");
+                                break;
+                            };
+
                         // TODO - Implement other message types here...
                         default:
                             throw new ArgumentException($"Unknown event type: {entityEvent.EventType} on message id: {message.MessageId}");

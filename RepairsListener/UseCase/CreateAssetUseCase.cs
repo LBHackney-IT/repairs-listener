@@ -27,7 +27,7 @@ namespace RepairsListener.UseCase
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
-            LambdaLogger.Log($"This is working and Dave is a legend. Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
+            LambdaLogger.Log($"Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
             LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING")}");
 
 
