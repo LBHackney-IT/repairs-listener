@@ -42,7 +42,7 @@ namespace RepairsListener
             services.ConfigureDynamoDB();
 
             services.AddHttpClient();
-            services.AddScoped<IDoSomethingUseCase, DoSomethingUseCase>();
+            services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
 
             services.AddScoped<IDbEntityGateway, DynamoDbEntityGateway>();
 
@@ -86,9 +86,9 @@ namespace RepairsListener
                     IMessageProcessing processor = null;
                     switch (entityEvent.EventType)
                     {
-                        case EventTypes.DoSomethingEvent:
+                        case EventTypes.AssetCreatedEvent:
                             {
-                                processor = ServiceProvider.GetService<IDoSomethingUseCase>();
+                                processor = ServiceProvider.GetService<ICreateAssetUseCase>();
                                 break;
                             }
                         // TODO - Implement other message types here...
