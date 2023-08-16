@@ -58,7 +58,7 @@ resource "aws_sqs_queue" "repairshubinbound_dead_letter_queue" {
 
 ### This is the queue  which will receive the events published to the topic listed above
 ### This is what the listener lambda function will get triggered by.
-#
+
 resource "aws_sqs_queue" "repairshubinbound_queue" {
    name                        = "repairshubinboundqueue.fifo"
    fifo_queue                  = true
