@@ -1,17 +1,10 @@
 using AutoFixture;
-using Castle.Core.Logging;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using RepairsListener.Boundary;
-using RepairsListener.Gateway;
 using RepairsListener.Gateway.Interfaces;
 using RepairsListener.UseCase;
-using RepairsListener.UseCase.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -25,7 +18,6 @@ namespace RepairsListener.Tests.UseCase
 
         private readonly Fixture _fixture = new Fixture();
 
-      //  [Setup]
         public CreateAssetUseCaseTests()
         {
             _gatewayMock = new Mock<IRepairsStoredProcedureGateway>();
