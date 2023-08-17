@@ -45,6 +45,7 @@ namespace RepairsListener
             services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
 
             services.AddScoped<IDbEntityGateway, DynamoDbEntityGateway>();
+            services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
             base.ConfigureServices(services);
         }
