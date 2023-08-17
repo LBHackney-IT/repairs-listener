@@ -7,30 +7,53 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
+using Amazon.Runtime.Internal.Util;
+using Microsoft.Extensions.Logging;
+using RepairsListener.Helpers;
 
 namespace RepairsListener.Gateway
 {
     public class RepairsStoredProcedureGateway : IRepairsStoredProcedureGateway
     {
-        public Task RunProcedure(string procName, params (string, string)[] parameters)
+        private readonly ILogger<IRepairsStoredProcedureGateway> _logger;
+
+        public RepairsStoredProcedureGateway(ILogger<IRepairsStoredProcedureGateway> logger)
         {
-            string connectionString = Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING");
+            _logger = logger;
+        }
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+        public async Task RunProcedure(string procName, params (string parameterName, string value)[] parameters)
+        {
+            var connectionString = EnvironmentHelper.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING");
+
+            using (var connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
-                using (SqlCommand command = new SqlCommand(procName, connection))
+                using (var command = new NpgsqlCommand(procName, connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
 
-                    foreach (var parameter in parameters)
+                    foreach (var (parameterName, value) in parameters)
                     {
-                        command.Parameters.AddWithValue(parameter.Item1, parameter.Item2);
+                        command.Parameters.AddWithValue(parameterName, value);
                     }
 
-                    var result = command.ExecuteNonQuery();
+                    _logger.LogInformation("Calling stored procedure called {ProcName} with {Parameters}", procName, parameters);
 
+                    try
+                    {
+                        var result = await command.ExecuteNonQueryAsync();
+
+                        _logger.LogInformation("Successfully called stored procedure called {ProcName} with {Parameters}", procName, parameters);
+
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogInformation("Failed to call stored procedure called {ProcName} with {Parameters} with {Exception}", procName, parameters, e);
+                        throw;
+                    }
                 }
             }
         }

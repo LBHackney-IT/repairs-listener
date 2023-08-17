@@ -9,6 +9,6 @@ namespace RepairsListener.Gateway.Interfaces
 {
     public interface IRepairsStoredProcedureGateway
     {
-        Task RunProcedure(string procName, params (string, string)[] parameters);
+        Task RunProcedure(string procName, params (string parameterName, string value)[] parameters);
     }
 }
