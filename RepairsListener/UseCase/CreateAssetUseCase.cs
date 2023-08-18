@@ -4,6 +4,7 @@ using RepairsListener.UseCase.Interfaces;
 using Hackney.Core.Logging;
 using System;
 using System.Threading.Tasks;
+using Hackney.Shared.Asset.Domain;
 
 namespace RepairsListener.UseCase
 {
@@ -21,12 +22,16 @@ namespace RepairsListener.UseCase
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
-            var assetId = message?.EntityId.ToString();
-            var parameters = ("property_reference", assetId);
+            var newData = (Asset) message.EventData.NewData;
+            var propertyReference = newData.AssetId;
+
+            if (string.IsNullOrEmpty(propertyReference)) {
+                throw new ArgumentNullException(nameof(newData.AssetId));
+            }
+
+            var parameters = ("property_reference", propertyReference);
 
             await _gateway.RunProcedure("assign_dlo_property_contracts_to_newbuild", parameters);
-
-            await Task.CompletedTask;
         }
     }
 }
