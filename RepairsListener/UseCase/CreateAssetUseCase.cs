@@ -13,32 +13,23 @@ namespace RepairsListener.UseCase
 {
     public class CreateAssetUseCase : ICreateAssetUseCase
     {
-        //private readonly IDbEntityGateway _gateway;
+        private readonly IRepairsStoredProcedureGateway _gateway;
 
-        public CreateAssetUseCase()
+        public CreateAssetUseCase(IRepairsStoredProcedureGateway gateway) : base()
         {
-            //_gateway = gateway;
+            _gateway = gateway;
         }
-
-        public IConfiguration Configuration { get; }
 
         [LogCall]
         public async Task ProcessMessageAsync(EntityEventSns message)
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
-            LambdaLogger.Log($"Environment: {Environment.GetEnvironmentVariable("ENVIRONMENT")} ASPNETCORE Environment: {Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}");
-            LambdaLogger.Log($"Database: {Environment.GetEnvironmentVariable("REPAIRS_DB_CONNECTION_STRING")}");
+            var assetId = message?.EntityId.ToString();
+            var parameters = ("property_reference", assetId);
 
+            await _gateway.RunProcedure("assign_dlo_property_contracts_to_newbuild", parameters);
 
-            // TODO - Implement use case logic
-            //DomainEntity entity = await _gateway.GetEntityAsync(message.EntityId).ConfigureAwait(false);
-            //if (entity is null) throw new EntityNotFoundException<DomainEntity>(message.EntityId);
-
-            //entity.Description = "Updated";
-
-            // Save updated entity
-            //await _gateway.SaveEntityAsync(entity).ConfigureAwait(false);
             await Task.CompletedTask;
         }
     }
