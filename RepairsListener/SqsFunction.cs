@@ -45,6 +45,7 @@ namespace RepairsListener
             services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
 
             services.AddScoped<IDbEntityGateway, DynamoDbEntityGateway>();
+            services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
             base.ConfigureServices(services);
         }
@@ -90,8 +91,15 @@ namespace RepairsListener
                             {
                                 processor = ServiceProvider.GetService<ICreateAssetUseCase>();
                                 break;
-                            }
-                        // TODO - Implement other message types here...
+                            };
+
+                        case EventTypes.AssetUpdatedEvent:
+                            {
+                                LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
+                                Environment.Exit(0);
+                                break;
+                            };
+
                         default:
                             throw new ArgumentException($"Unknown event type: {entityEvent.EventType} on message id: {message.MessageId}");
                     }
@@ -101,7 +109,7 @@ namespace RepairsListener
                 catch (Exception ex)
                 {
                     Logger.LogError(ex, $"Exception processing message id: {message.MessageId}; type: {entityEvent.EventType}; entity id: {entityEvent.EntityId}");
-                    throw; // AWS will handle retry/moving to the dead letter queue
+                    throw;
                 }
             }
         }
