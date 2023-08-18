@@ -5,7 +5,6 @@ using RepairsListener.Gateway;
 using RepairsListener.Gateway.Interfaces;
 using RepairsListener.UseCase;
 using RepairsListener.UseCase.Interfaces;
-using Hackney.Core.DynamoDb;
 using Hackney.Core.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,12 +38,9 @@ namespace RepairsListener
         /// <param name="services"></param>
         protected override void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDynamoDB();
-
             services.AddHttpClient();
             services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
 
-            services.AddScoped<IDbEntityGateway, DynamoDbEntityGateway>();
             services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
             base.ConfigureServices(services);

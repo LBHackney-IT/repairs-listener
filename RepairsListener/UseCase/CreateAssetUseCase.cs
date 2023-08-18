@@ -1,13 +1,9 @@
 using RepairsListener.Boundary;
-using RepairsListener.Domain;
 using RepairsListener.Gateway.Interfaces;
-using RepairsListener.Infrastructure.Exceptions;
 using RepairsListener.UseCase.Interfaces;
 using Hackney.Core.Logging;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Amazon.Lambda.Core;
 
 namespace RepairsListener.UseCase
 {
