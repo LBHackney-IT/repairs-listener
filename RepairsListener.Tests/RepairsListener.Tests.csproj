@@ -19,7 +19,6 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="Hackney.Core.Testing.DynamoDb" Version="1.57.0" />
     <PackageReference Include="Hackney.Core.Testing.Shared" Version="1.54.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -27,7 +26,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
-    <PackageReference Include="Npgsql" Version="7.0.4" />
     <PackageReference Include="TestStack.BDDfy" Version="4.3.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -48,6 +46,9 @@
   </ItemGroup>
     
   <ItemGroup>
-    <Folder Include="Factories\" />
+    <Folder Include="E2ETests\Fixtures\" />
+    <Folder Include="E2ETests\Stories\" />
+    <Folder Include="Gateway\" />
+    <Folder Include="UseCase\" />
   </ItemGroup>
 </Project>
