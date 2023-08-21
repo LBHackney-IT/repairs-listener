@@ -30,6 +30,11 @@ namespace RepairsListener.UseCase
             string jsonSnsMessage = JsonConvert.SerializeObject(message);
             _logger.LogInformation("RepairsListener received SNS message with body {JsonSnsMessage}", jsonSnsMessage);
 
+            string newDataRawText = message.EventData.NewData.ToString();
+            _logger.LogInformation("For troubleshooting purposes: NewData raw text from SNS message: {NewDataRawText}", newDataRawText);
+
+            string newDataJson = JsonConvert.SerializeObject(message.EventData.NewData);
+            _logger.LogInformation("For troubleshooting purposes: NewData JSON from SNS message: {NewDataJson}", newDataJson);
 
             var newData = (Asset) message.EventData.NewData;
             var propertyReference = newData.AssetId;
