@@ -5,16 +5,21 @@ using Hackney.Core.Logging;
 using System;
 using System.Threading.Tasks;
 using Hackney.Shared.Asset.Domain;
+using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace RepairsListener.UseCase
 {
     public class CreateAssetUseCase : ICreateAssetUseCase
     {
         private readonly IRepairsStoredProcedureGateway _gateway;
+        private readonly ILogger<ICreateAssetUseCase> _logger;
 
-        public CreateAssetUseCase(IRepairsStoredProcedureGateway gateway) : base()
+
+        public CreateAssetUseCase(IRepairsStoredProcedureGateway gateway, ILogger<ICreateAssetUseCase> logger) : base()
         {
             _gateway = gateway;
+            _logger = logger;
         }
 
         [LogCall]
@@ -22,10 +27,15 @@ namespace RepairsListener.UseCase
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
+            string jsonSnsMessage = JsonConvert.SerializeObject(message);
+            _logger.LogInformation("RepairsListener received SNS message with body {JsonSnsMessage}", jsonSnsMessage);
+
+
             var newData = (Asset) message.EventData.NewData;
             var propertyReference = newData.AssetId;
 
-            if (string.IsNullOrEmpty(propertyReference)) {
+            if (string.IsNullOrEmpty(propertyReference))
+            {
                 throw new ArgumentNullException(nameof(newData.AssetId));
             }
 
