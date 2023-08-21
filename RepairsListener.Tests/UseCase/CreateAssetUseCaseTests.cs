@@ -1,6 +1,7 @@
 using AutoFixture;
 using FluentAssertions;
 using Hackney.Shared.Asset.Domain;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualBasic;
 using Moq;
 using RepairsListener.Boundary;
@@ -25,7 +26,7 @@ namespace RepairsListener.Tests.UseCase
         {
             _gatewayMock = new Mock<IRepairsStoredProcedureGateway>();
 
-            _classUnderTest = new CreateAssetUseCase(_gatewayMock.Object);
+            _classUnderTest = new CreateAssetUseCase(_gatewayMock.Object, new NullLogger<CreateAssetUseCase>());
         }
 
         [Fact]
