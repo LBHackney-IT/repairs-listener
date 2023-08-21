@@ -5,8 +5,8 @@ using Hackney.Core.Logging;
 using System;
 using System.Threading.Tasks;
 using Hackney.Shared.Asset.Domain;
-using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace RepairsListener.UseCase
 {
@@ -27,13 +27,13 @@ namespace RepairsListener.UseCase
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
-            string jsonSnsMessage = JsonConvert.SerializeObject(message);
+            string jsonSnsMessage = JsonSerializer.Serialize(message);
             _logger.LogInformation("RepairsListener received SNS message with body {JsonSnsMessage}", jsonSnsMessage);
 
             string newDataRawText = message.EventData.NewData.ToString();
             _logger.LogInformation("For troubleshooting purposes: NewData raw text from SNS message: {NewDataRawText}", newDataRawText);
 
-            string newDataJson = JsonConvert.SerializeObject(message.EventData.NewData);
+            string newDataJson = JsonSerializer.Serialize(message.EventData.NewData);
             _logger.LogInformation("For troubleshooting purposes: NewData JSON from SNS message: {NewDataJson}", newDataJson);
 
             var newData = (Asset) message.EventData.NewData;
