@@ -30,18 +30,18 @@ namespace RepairsListener.UseCase
             string jsonSnsMessage = JsonSerializer.Serialize(message);
             _logger.LogInformation("RepairsListener received SNS message with body {JsonSnsMessage}", jsonSnsMessage);
 
-            string newDataRawText = message.EventData.NewData.ToString();
-            _logger.LogInformation("For troubleshooting purposes: NewData raw text from SNS message: {NewDataRawText}", newDataRawText);
+            // Get asset data from SNS message
+            string newAssetStringified = message.EventData.NewData.ToString();
 
-            string newDataJson = JsonSerializer.Serialize(message.EventData.NewData);
-            _logger.LogInformation("For troubleshooting purposes: NewData JSON from SNS message: {NewDataJson}", newDataJson);
+            // Deserialize the JSON content directly into an Asset object
+            Asset newAsset = JsonSerializer.Deserialize<Asset>(newAssetStringified);
+            _logger.LogInformation("New Asset received by RepairsListener. Asset: {NewAssetStringified}", newAsset);
 
-            var newData = (Asset) message.EventData.NewData;
-            var propertyReference = newData.AssetId;
+            var propertyReference = newAsset.AssetId;
 
             if (string.IsNullOrEmpty(propertyReference))
             {
-                throw new ArgumentNullException(nameof(newData.AssetId));
+                throw new ArgumentNullException(nameof(newAsset.AssetId));
             }
 
             var parameters = ("property_reference", propertyReference);
