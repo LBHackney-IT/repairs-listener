@@ -9,6 +9,7 @@ using RepairsListener.Gateway.Interfaces;
 using RepairsListener.UseCase;
 using System;
 using System.CodeDom;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -46,16 +47,13 @@ namespace RepairsListener.Tests.UseCase
         public async void ProcessMessageAsync_WhenAssetIdNull_ThrowsException()
         {
             // Arrange
-            var asset = new Asset
-            {
-
-            };
+            JsonElement assetJsonElement = JsonSerializer.SerializeToElement(new Asset { });
 
             var message = new EntityEventSns
             {
                 EventData = new EventData
                 {
-                    NewData = asset
+                    NewData = assetJsonElement
                 }
             };
 
@@ -63,23 +61,22 @@ namespace RepairsListener.Tests.UseCase
             Func<Task> func = async () => await _classUnderTest.ProcessMessageAsync(message);
 
             // Assert
-            await func.Should().ThrowAsync<ArgumentNullException>(nameof(asset.Id));
+            await func.Should().ThrowAsync<ArgumentNullException>();
         }
 
         [Fact]
         public async void ProcessMessageAsync_WhenValid_CallsStoredProcedure()
         {
             // Arrange
-            var asset = new Asset
-            {
-                AssetId = _fixture.Create<string>()
-            };
+            string assetId = _fixture.Create<string>();
+
+            JsonElement assetJsonElement = JsonSerializer.SerializeToElement(new Asset { AssetId = assetId });
 
             var message = new EntityEventSns
             {
                 EventData = new EventData
                 {
-                    NewData = asset
+                    NewData = assetJsonElement
                 }
             };
 
@@ -87,7 +84,7 @@ namespace RepairsListener.Tests.UseCase
             await _classUnderTest.ProcessMessageAsync(message);
 
             // Assert
-            var expectedParameters = ("property_reference", asset.AssetId);
+            var expectedParameters = ("property_reference", assetId);
 
             _gatewayMock
                 .Verify(x => x.RunProcedure("assign_dlo_property_contracts_to_newbuild", expectedParameters), Times.Once);
