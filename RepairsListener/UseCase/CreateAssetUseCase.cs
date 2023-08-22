@@ -33,9 +33,14 @@ namespace RepairsListener.UseCase
             // Get asset data from SNS message
             string newAssetStringified = message.EventData.NewData.ToString();
 
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             // Deserialize the JSON content directly into an Asset object
-            Asset newAsset = JsonSerializer.Deserialize<Asset>(newAssetStringified);
-            _logger.LogInformation("New Asset received by RepairsListener. Asset: {NewAssetStringified}", newAsset);
+            Asset newAsset = JsonSerializer.Deserialize<Asset>(newAssetStringified, options);
+            _logger.LogInformation("New Asset received by RepairsListener. Asset: {NewAsset}", JsonSerializer.Serialize(newAsset));
 
             var propertyReference = newAsset.AssetId;
 
