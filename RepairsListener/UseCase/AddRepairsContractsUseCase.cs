@@ -34,7 +34,7 @@ namespace RepairsListener.UseCase
             // Get asset data from SNS message
             string addRepairsContractsMessage = message.EventData.NewData.ToString();
 
-
+            // Required for deserialization
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
