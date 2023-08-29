@@ -18,7 +18,7 @@ namespace RepairsListener.Tests.UseCase
     [Collection("LogCall collection")]
     public class CreateAssetUseCaseTests
     {
-        private readonly CreateAssetUseCase _classUnderTest;
+        private readonly AddRepairsContractsUseCase _classUnderTest;
         private readonly Mock<IRepairsStoredProcedureGateway> _gatewayMock;
 
         private readonly Fixture _fixture = new Fixture();
@@ -27,7 +27,7 @@ namespace RepairsListener.Tests.UseCase
         {
             _gatewayMock = new Mock<IRepairsStoredProcedureGateway>();
 
-            _classUnderTest = new CreateAssetUseCase(_gatewayMock.Object, new NullLogger<CreateAssetUseCase>());
+            _classUnderTest = new AddRepairsContractsUseCase(_gatewayMock.Object, new NullLogger<AddRepairsContractsUseCase>());    
         }
 
         [Fact]

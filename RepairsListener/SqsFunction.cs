@@ -39,7 +39,7 @@ namespace RepairsListener
         protected override void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
+            services.AddScoped<IAddRepairsContractsUseCase, AddRepairsContractsUseCase>();
 
             services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
@@ -85,14 +85,21 @@ namespace RepairsListener
                     {
                         case EventTypes.AssetCreatedEvent:
                             {
-                                processor = ServiceProvider.GetService<ICreateAssetUseCase>();
+                                LambdaLogger.Log("Received a valid Asset Created event. Not doing anything with this for now");
+                                Environment.Exit(0);
                                 break;
                             };
 
                         case EventTypes.AssetUpdatedEvent:
                             {
-                                LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
+                                LambdaLogger.Log("Received a valid Asset Updated event. Not doing anything with this for now");
                                 Environment.Exit(0);
+                                break;
+                            };
+
+                        case EventTypes.AddRepairsContractsToAssetEvent:
+                            {
+                                processor = ServiceProvider.GetService<IAddRepairsContractsUseCase>();
                                 break;
                             };
 
