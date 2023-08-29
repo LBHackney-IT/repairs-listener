@@ -44,27 +44,6 @@ namespace RepairsListener.Tests.UseCase
             await func.Should().ThrowAsync<ArgumentNullException>(nameof(EntityEventSns));
         }
 
-        //[Fact]
-        //public async void ProcessMessageAsync_WhenPropRefNull_ThrowsException()
-        //{
-        //    // Arrange
-        //    JsonElement assetJsonElement = JsonSerializer.SerializeToElement(new Asset { });
-
-        //    var message = new EntityEventSns
-        //    {
-        //        EventData = new EventData
-        //        {
-        //            NewData = assetJsonElement
-        //        }
-        //    };
-
-        //    // Act
-        //    Func<Task> func = async () => await _classUnderTest.ProcessMessageAsync(message);
-
-        //    // Assert
-        //    await func.Should().ThrowAsync<ArgumentNullException>();
-        //}
-
         [Fact]
         public async void ProcessMessageAsync_WhenEventDataValid_CallsStoredProcedure()
         {
