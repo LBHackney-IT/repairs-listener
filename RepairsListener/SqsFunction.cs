@@ -39,7 +39,7 @@ namespace RepairsListener
         protected override void ConfigureServices(IServiceCollection services)
         {
             services.AddHttpClient();
-            services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
+            services.AddScoped<IAddRepairsContractsUseCase, AddRepairsContractsUseCase>();
 
             services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
@@ -85,14 +85,30 @@ namespace RepairsListener
                     {
                         case EventTypes.AssetCreatedEvent:
                             {
-                                processor = ServiceProvider.GetService<ICreateAssetUseCase>();
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetCreatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    );
+                                Environment.Exit(0);
                                 break;
                             };
 
                         case EventTypes.AssetUpdatedEvent:
                             {
-                                LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
-                                Environment.Exit(0);
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetUpdatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    ); Environment.Exit(0);
+                                break;
+                            };
+
+                        case EventTypes.AddRepairsContractsToAssetEvent:
+                            {
+                                processor = ServiceProvider.GetService<IAddRepairsContractsUseCase>();
                                 break;
                             };
 
