@@ -17,7 +17,7 @@ namespace RepairsListener.UseCase
         private readonly ILogger<IAddRepairsContractsUseCase> _logger;
 
 
-        public AddRepairsContractsUseCase(IRepairsStoredProcedureGateway gateway, ILogger<IAddRepairsContractsUseCase> logger) : base()
+        public AddRepairsContractsUseCase(IRepairsStoredProcedureGateway gateway, ILogger<IAddRepairsContractsUseCase> logger)
         {
             _gateway = gateway;
             _logger = logger;
@@ -30,6 +30,12 @@ namespace RepairsListener.UseCase
 
             string jsonSnsMessage = JsonSerializer.Serialize(message);
             _logger.LogInformation("RepairsListener received AddRepairsContractsToAssetEvent SNS message with body {JsonSnsMessage}", jsonSnsMessage);
+
+            if (message.EventData.NewData is null)
+            {
+                _logger.LogInformation("The data within the AddRepairsContractsToAssetEvent message for asset with ID {EntityId} is invalid (null).", message.EntityId);
+                return;
+            }
 
             // Get data from SNS message in string format
             string addRepairsContractsMessage = message.EventData.NewData.ToString();

@@ -85,15 +85,24 @@ namespace RepairsListener
                     {
                         case EventTypes.AssetCreatedEvent:
                             {
-                                LambdaLogger.Log("Received a valid Asset Created event. Not doing anything with this for now");
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetCreatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    );
                                 Environment.Exit(0);
                                 break;
                             };
 
                         case EventTypes.AssetUpdatedEvent:
                             {
-                                LambdaLogger.Log("Received a valid Asset Updated event. Not doing anything with this for now");
-                                Environment.Exit(0);
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetUpdatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    ); Environment.Exit(0);
                                 break;
                             };
 
