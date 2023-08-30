@@ -34,7 +34,7 @@ namespace RepairsListener.UseCase
             if (message.EventData.NewData is null)
             {
                 _logger.LogInformation("The data within the AddRepairsContractsToAssetEvent message for asset with ID {EntityId} is invalid (null).", message.EntityId);
-                return;
+                throw new ArgumentNullException(nameof(message.EventData.NewData));
             }
 
             // Get data from SNS message in string format
