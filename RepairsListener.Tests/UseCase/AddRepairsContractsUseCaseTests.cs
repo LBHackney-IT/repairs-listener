@@ -45,17 +45,15 @@ namespace RepairsListener.Tests.UseCase
         }
 
         [Fact]
-        public async void ProcessMessageAsync_WhenEventDataValid_CallsStoredProcedure()
+        public async void ProcessMessageAsync_WhenPropRefValid_CallsStoredProcedure()
         {
             // Arrange
             Guid entityId = _fixture.Create<Guid>();
             string propRef = _fixture.Create<string>();
-            bool executeStoreProcedure = true;
 
             JsonElement addRepairsContractsMessageObject = JsonSerializer.SerializeToElement(new AddRepairsContractsToNewAssetObject {
                 EntityId = entityId,
                 PropRef = propRef,
-                AddRepairsContracts = executeStoreProcedure
             });
 
             var message = new EntityEventSns
@@ -76,39 +74,6 @@ namespace RepairsListener.Tests.UseCase
                 .Verify(x => x.RunProcedure("assign_dlo_property_contracts_to_newbuild", expectedParameters), Times.Once);
         }
 
-        [Fact]
-        public async void ProcessMessageAsync_WhenAddRepairsContractsFalse_DoesNotCallStoredProcedure()
-        {
-            // Arrange
-            Guid entityId = _fixture.Create<Guid>();
-            string propRef = _fixture.Create<string>();
-            bool executeStoreProcedure = false;
-
-            JsonElement addRepairsContractsMessageObject = JsonSerializer.SerializeToElement(new AddRepairsContractsToNewAssetObject
-            {
-                EntityId = entityId,
-                PropRef = propRef,
-                AddRepairsContracts = executeStoreProcedure
-            });
-
-            var message = new EntityEventSns
-            {
-                EventData = new EventData
-                {
-                    NewData = addRepairsContractsMessageObject
-                }
-            };
-
-            // Act
-            await _classUnderTest.ProcessMessageAsync(message);
-
-            // Assert
-            var expectedParameters = ("property_reference", propRef);
-
-            _gatewayMock
-                .Verify(x => x.RunProcedure("assign_dlo_property_contracts_to_newbuild", expectedParameters), Times.Never);
-        }
-
         [Theory]
         [InlineData("")]
         [InlineData(null)]
@@ -117,13 +82,11 @@ namespace RepairsListener.Tests.UseCase
             // Arrange
             Guid entityId = new Guid();
             string propRef = inputPropRef;
-            bool executeStoreProcedure = true;
 
             JsonElement addRepairsContractsMessageObject = JsonSerializer.SerializeToElement(new AddRepairsContractsToNewAssetObject
             {
                 EntityId = entityId,
                 PropRef = propRef,
-                AddRepairsContracts = executeStoreProcedure
             });
 
             var message = new EntityEventSns
