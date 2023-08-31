@@ -5,7 +5,6 @@ using RepairsListener.Gateway;
 using RepairsListener.Gateway.Interfaces;
 using RepairsListener.UseCase;
 using RepairsListener.UseCase.Interfaces;
-using Hackney.Core.DynamoDb;
 using Hackney.Core.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,12 +38,9 @@ namespace RepairsListener
         /// <param name="services"></param>
         protected override void ConfigureServices(IServiceCollection services)
         {
-            services.ConfigureDynamoDB();
-
             services.AddHttpClient();
-            services.AddScoped<ICreateAssetUseCase, CreateAssetUseCase>();
+            services.AddScoped<IAddRepairsContractsUseCase, AddRepairsContractsUseCase>();
 
-            services.AddScoped<IDbEntityGateway, DynamoDbEntityGateway>();
             services.AddScoped<IRepairsStoredProcedureGateway, RepairsStoredProcedureGateway>();
 
             base.ConfigureServices(services);
@@ -52,7 +48,7 @@ namespace RepairsListener
 
 
         /// <summary>
-        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used 
+        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used
         /// to respond to SQS messages.
         /// </summary>
         /// <param name="evnt"></param>
@@ -89,14 +85,29 @@ namespace RepairsListener
                     {
                         case EventTypes.AssetCreatedEvent:
                             {
-                                processor = ServiceProvider.GetService<ICreateAssetUseCase>();
-                                break;
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetCreatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    );
+                                return;
                             };
 
                         case EventTypes.AssetUpdatedEvent:
                             {
-                                LambdaLogger.Log("Recieved a valid update event. Not doing anything with this for now");
-                                Environment.Exit(0);
+                                Logger.LogInformation
+                                    (
+                                    "Received a valid event of type AssetUpdatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
+                                    entityEvent.EntityId,
+                                    entityEvent.CorrelationId
+                                    );
+                                return;
+                            };
+
+                        case EventTypes.AddRepairsContractsToAssetEvent:
+                            {
+                                processor = ServiceProvider.GetService<IAddRepairsContractsUseCase>();
                                 break;
                             };
 
