@@ -8,7 +8,7 @@
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <NoWarn>CA1307;CA1051;CA1822;CA1001;CA1062;CA2000;S2699</NoWarn>
   </PropertyGroup>
-    
+
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.Core" Version="2.0.0" />
     <PackageReference Include="Amazon.Lambda.TestUtilities" Version="2.0.0" />
@@ -27,6 +27,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Moq" Version="4.16.1" />
+    <PackageReference Include="Npgsql" Version="7.0.4" />
     <PackageReference Include="TestStack.BDDfy" Version="4.3.2" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.3">
@@ -34,18 +35,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-    
+
   <ItemGroup>
     <ProjectReference Include="..\RepairsListener\RepairsListener.csproj" />
   </ItemGroup>
-    
+
   <ItemGroup>
       <Compile Remove="TestResults\**" />
       <Content Remove="TestResults\**" />
       <EmbeddedResource Remove="TestResults\**" />
       <None Remove="TestResults\**" />
   </ItemGroup>
-    
+
   <ItemGroup>
     <Folder Include="E2ETests\Fixtures\" />
     <Folder Include="E2ETests\Stories\" />

@@ -48,7 +48,7 @@ namespace RepairsListener
 
 
         /// <summary>
-        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used 
+        /// This method is called for every Lambda invocation. This method takes in an SQS event object and can be used
         /// to respond to SQS messages.
         /// </summary>
         /// <param name="evnt"></param>
