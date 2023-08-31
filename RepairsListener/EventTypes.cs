@@ -4,5 +4,6 @@ namespace RepairsListener
     {
         public const string AssetCreatedEvent = "AssetCreatedEvent";
         public const string AssetUpdatedEvent = "AssetUpdatedEvent";
+        public const string AddRepairsContractsToAssetEvent = "AddRepairsContractsToAssetEvent";
     }
 }
