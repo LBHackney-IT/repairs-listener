@@ -91,8 +91,7 @@ namespace RepairsListener
                                     entityEvent.EntityId,
                                     entityEvent.CorrelationId
                                     );
-                                Environment.Exit(0);
-                                break;
+                                return;
                             };
 
                         case EventTypes.AssetUpdatedEvent:
@@ -102,8 +101,8 @@ namespace RepairsListener
                                     "Received a valid event of type AssetUpdatedEvent for new asset with ID {EntityId}. Correlation ID: {CorrelationId}. Not doing anything with this for now",
                                     entityEvent.EntityId,
                                     entityEvent.CorrelationId
-                                    ); Environment.Exit(0);
-                                break;
+                                    );
+                                return;
                             };
 
                         case EventTypes.AddRepairsContractsToAssetEvent:
