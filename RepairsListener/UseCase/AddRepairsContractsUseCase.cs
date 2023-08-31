@@ -28,9 +28,6 @@ namespace RepairsListener.UseCase
         {
             if (message is null) throw new ArgumentNullException(nameof(message));
 
-            string jsonSnsMessage = JsonSerializer.Serialize(message);
-            _logger.LogInformation("RepairsListener received AddRepairsContractsToAssetEvent SNS message with body {JsonSnsMessage}", jsonSnsMessage);
-
             if (message.EventData.NewData is null)
             {
                 _logger.LogInformation("The data within the AddRepairsContractsToAssetEvent message for asset with ID {EntityId} is invalid (null).", message.EntityId);
@@ -45,9 +42,10 @@ namespace RepairsListener.UseCase
 
             // Deserialize the JSON content directly into an AddRepairsContractsToNewAssetObject object
             AddRepairsContractsToNewAssetObject addRepairsContractsMessageObject = JsonSerializer.Deserialize<AddRepairsContractsToNewAssetObject>(addRepairsContractsMessage, options);
-            _logger.LogInformation("AddRepairsContractsMessageObject is being processed. Object: {AddRepairsContractsMessageObject}", JsonSerializer.Serialize(addRepairsContractsMessageObject));
 
             string propertyReference = addRepairsContractsMessageObject.PropRef;
+
+            _logger.LogInformation("RepairsListener received AddRepairsContractsToAssetEvent for asset ID: {PropRef}", propertyReference);
 
             if (string.IsNullOrEmpty(propertyReference))
             {
