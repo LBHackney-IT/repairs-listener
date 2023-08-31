@@ -28,7 +28,7 @@ namespace RepairsListener.Tests.UseCase
         {
             _gatewayMock = new Mock<IRepairsStoredProcedureGateway>();
 
-            _classUnderTest = new AddRepairsContractsUseCase(_gatewayMock.Object, new NullLogger<AddRepairsContractsUseCase>());    
+            _classUnderTest = new AddRepairsContractsUseCase(_gatewayMock.Object, new NullLogger<AddRepairsContractsUseCase>());
         }
 
         [Fact]
@@ -51,7 +51,8 @@ namespace RepairsListener.Tests.UseCase
             Guid entityId = _fixture.Create<Guid>();
             string propRef = _fixture.Create<string>();
 
-            JsonElement addRepairsContractsMessageObject = JsonSerializer.SerializeToElement(new AddRepairsContractsToNewAssetObject {
+            JsonElement addRepairsContractsMessageObject = JsonSerializer.SerializeToElement(new AddRepairsContractsToNewAssetObject
+            {
                 EntityId = entityId,
                 PropRef = propRef,
             });
