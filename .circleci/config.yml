@@ -112,17 +112,14 @@ jobs:
     executor: docker-python
     steps:
       - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_DEVELOPMENT
   assume-role-staging:
     executor: docker-python
     steps:
       - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_STAGING
   assume-role-production:
     executor: docker-python
     steps:
       - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_PRODUCTION
   terraform-init-and-apply-to-development:
     executor: docker-terraform
     steps:
@@ -143,19 +140,16 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "development"
-          aws-account: $AWS_ACCOUNT_DEVELOPMENT
   deploy-to-staging:
     executor: docker-dotnet
     steps:
       - deploy-lambda:
           stage: "staging"
-          aws-account: $AWS_ACCOUNT_STAGING
   deploy-to-production:
     executor: docker-dotnet
     steps:
       - deploy-lambda:
           stage: "production"
-          aws-account: $AWS_ACCOUNT_PRODUCTION
 
 workflows:
   check-and-deploy-development:
