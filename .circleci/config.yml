@@ -111,15 +111,15 @@ jobs:
   assume-role-development:
     executor: docker-python
     steps:
-      - assume-role-and-persist-workspace:
+      - assume-role-and-persist-workspace
   assume-role-staging:
     executor: docker-python
     steps:
-      - assume-role-and-persist-workspace:
+      - assume-role-and-persist-workspace
   assume-role-production:
     executor: docker-python
     steps:
-      - assume-role-and-persist-workspace:
+      - assume-role-and-persist-workspace
   terraform-init-and-apply-to-development:
     executor: docker-terraform
     steps:
