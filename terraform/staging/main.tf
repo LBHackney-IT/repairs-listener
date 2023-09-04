@@ -30,7 +30,7 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket  = "terraform-state-housing-staging"
+    bucket  = "terraform-state-staging-apis"
     encrypt = true
     region  = "eu-west-2"
     key     = "services/repairs-listener/state"
@@ -72,7 +72,7 @@ resource "aws_sqs_queue" "repairshubinbound_queue" {
 }
 
 ### This is the AWS policy that allows the topic to forward an event to the queue declared above
- 
+
 resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
   queue_url = aws_sqs_queue.repairshubinbound_queue.id
   policy = <<POLICY
@@ -98,7 +98,7 @@ resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
 }
 
 ### This is the subscription definition that tells the topic which queue to use
- 
+
 resource "aws_sns_topic_subscription" "repairshubinbound_queue_subscribe_to_assets_sns" {
    topic_arn = data.aws_ssm_parameter.assets_sns_topic_arn.value
    protocol  = "sqs"
@@ -108,7 +108,7 @@ resource "aws_sns_topic_subscription" "repairshubinbound_queue_subscribe_to_asse
 
 ### This creates an AWS parameter with arn of the queue that will then be used within the Serverless.yml
 ### to specify the queue that will trigger the lambda function.
- 
+
 resource "aws_ssm_parameter" "repairshubinbound_sqs_queue_arn" {
   name  = "/sqs-queue/staging/repairshubinbound/arn"
   type  = "String"
