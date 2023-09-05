@@ -117,7 +117,7 @@ jobs:
     executor: docker-python
     steps:
       - assume-role-and-persist-workspace:
-          aws-account: $AWS_ACCOUNT_STAGING
+          aws-account: 715003523189
   assume-role-production:
     executor: docker-python
     steps:
