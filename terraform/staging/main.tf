@@ -52,7 +52,7 @@ resource "aws_sqs_queue" "repairshubinbound_dead_letter_queue" {
    name                        = "repairshubinbounddeadletterqueue.fifo"
    fifo_queue                  = true
    content_based_deduplication = true
-   kms_master_key_id           = "alias/housing-staging-cmk"
+   kms_master_key_id           = "alias/staging-apis-cmk"
    kms_data_key_reuse_period_seconds = 300
  }
 
@@ -63,7 +63,7 @@ resource "aws_sqs_queue" "repairshubinbound_queue" {
    name                        = "repairshubinboundqueue.fifo"
    fifo_queue                  = true
    content_based_deduplication = true
-   kms_master_key_id           = "alias/housing-staging-cmk"           # This is a custom key
+   kms_master_key_id           = "alias/staging-apis-cmk"           # This is a custom key
    kms_data_key_reuse_period_seconds = 300
    redrive_policy              = jsonencode({
      deadLetterTargetArn = aws_sqs_queue.repairshubinbound_dead_letter_queue.arn,
