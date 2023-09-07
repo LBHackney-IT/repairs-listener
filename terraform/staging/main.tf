@@ -29,14 +29,14 @@ locals {
   parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
 }
 
-#terraform {
-#  backend "s3" {
-#    bucket  = "terraform-state-staging-apis"
-#    encrypt = true
-#    region  = "eu-west-2"
-#    key     = "services/repairs-listener/state"
-#  }
-#}
+terraform {
+  backend "s3" {
+    bucket  = "terraform-state-staging-apis"
+    encrypt = true
+    region  = "eu-west-2"
+    key     = "services/repairs-listener/state"
+  }
+}
 
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
    name = "/sns-topic/staging/asset/arn"
@@ -48,7 +48,7 @@ resource "aws_sqs_queue" "repairshubinbound_dead_letter_queue" {
    name                        = "repairshubinbounddeadletterqueue.fifo"
    fifo_queue                  = true
    content_based_deduplication = true
-   kms_master_key_id           = "alias/staging-apis-cmk"
+   kms_master_key_id           = "alias/housing-staging-cmk"
    kms_data_key_reuse_period_seconds = 300
  }
 
@@ -59,7 +59,7 @@ resource "aws_sqs_queue" "repairshubinbound_queue" {
    name                        = "repairshubinboundqueue.fifo"
    fifo_queue                  = true
    content_based_deduplication = true
-   kms_master_key_id           = "alias/staging-apis-cmk"           # This is a custom key
+   kms_master_key_id           = "alias/housing-staging-cmk"           # This is a custom key
    kms_data_key_reuse_period_seconds = 300
    redrive_policy              = jsonencode({
      deadLetterTargetArn = aws_sqs_queue.repairshubinbound_dead_letter_queue.arn,
