@@ -25,23 +25,19 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 locals {
-    parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
+  application_name = "repairs listener"
+  parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
 }
 
-terraform {
-  backend "s3" {
-    bucket  = "terraform-state-staging-apis"
-    encrypt = true
-    region  = "eu-west-2"
-    key     = "services/repairs-listener/state"
-  }
-}
+#terraform {
+#  backend "s3" {
+#    bucket  = "terraform-state-staging-apis"
+#    encrypt = true
+#    region  = "eu-west-2"
+#    key     = "services/repairs-listener/state"
+#  }
+#}
 
-### TODO - Replace all instances of SOME-SOURCE-DOMAIN and THIS_DOMAIN (in lower case) with the domains required below.
-
-### This is the parameter containing the arn of the topic to which we want to subscribe
-### This will have been created by the service the generates the events in which we are interested
-#
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
    name = "/sns-topic/staging/asset/arn"
 }
