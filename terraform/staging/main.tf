@@ -109,5 +109,6 @@ resource "aws_ssm_parameter" "repairshubinbound_sqs_queue_arn" {
   name  = "/sqs-queue/staging/repairshubinbound/arn"
   type  = "String"
   value = aws_sqs_queue.repairshubinbound_queue.arn
+  overwrite = true
 }
 
