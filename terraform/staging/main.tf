@@ -29,14 +29,14 @@ locals {
   parameter_store = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter"
 }
 
-#terraform {
-#  backend "s3" {
-#    bucket  = "terraform-state-staging-apis"
-#    encrypt = true
-#    region  = "eu-west-2"
-#    key     = "services/repairs-listener/state"
-#  }
-#}
+terraform {
+  backend "s3" {
+    bucket  = "terraform-state-staging-apis"
+    encrypt = true
+    region  = "eu-west-2"
+    key     = "services/repairs-listener/state"
+  }
+}
 
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
    name = "/sns-topic/staging/asset/arn"
