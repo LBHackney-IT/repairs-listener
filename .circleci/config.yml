@@ -191,7 +191,7 @@ workflows:
               only: develop
   check-and-deploy-staging-and-production:
      jobs:
-     - check-code-formatting:
+      - check-code-formatting:
          context: api-nuget-token-context
          filters:
            branches:
