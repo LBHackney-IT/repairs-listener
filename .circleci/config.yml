@@ -192,25 +192,25 @@ workflows:
          filters:
            branches:
              only: master
-     - build-and-test:
+      - build-and-test:
          context: api-nuget-token-context
          filters:
            branches:
              only: master
-     - assume-role-staging:
+      - assume-role-staging:
          context: api-assume-role-housing-staging-context
          requires:
              - build-and-test
          filters:
             branches:
               only: master
-     - terraform-init-and-apply-to-staging:
+      - terraform-init-and-apply-to-staging:
          requires:
            - assume-role-staging
          filters:
            branches:
              only: master
-     - deploy-to-staging:
+      - deploy-to-staging:
          context:
             - "Serverless Framework"
             - api-nuget-token-context
@@ -219,27 +219,27 @@ workflows:
          filters:
            branches:
              only: master
-     - permit-production-terraform-release:
+      - permit-production-terraform-release:
          type: approval
          requires:
            - deploy-to-staging
          filters:
            branches:
              only: master
-     - assume-role-production:
+      - assume-role-production:
          context: api-assume-role-housing-production-context
          requires:
              - permit-production-terraform-release
          filters:
             branches:
               only: master
-     - terraform-init-and-apply-to-production:
+      - terraform-init-and-apply-to-production:
          requires:
            - assume-role-production
          filters:
            branches:
              only: master
-     - permit-production-release:
+      - permit-production-release:
          type: approval
          requires:
            - deploy-to-staging
@@ -247,7 +247,7 @@ workflows:
          filters:
            branches:
              only: master
-     - deploy-to-production:
+      - deploy-to-production:
          context:
             - "Serverless Framework"
             - api-nuget-token-context
