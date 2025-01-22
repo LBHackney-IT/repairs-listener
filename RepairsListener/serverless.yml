@@ -1,7 +1,7 @@
 service: repairs-listener
 provider:
   name: aws
-  runtime: dotnet6
+  runtime: dotnet8
   memorySize: 2048
   vpc: ${self:custom.vpc.${opt:stage}}
   stage: ${opt:stage}
@@ -17,7 +17,7 @@ provider:
   versionFunctions: false
 
 package:
-  artifact: ./bin/release/net6.0/repairs-listener.zip
+  artifact: ./bin/release/net8.0/repairs-listener.zip
 
 functions:
   RepairsListener:

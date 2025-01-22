@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  aws-ecr: circleci/aws-ecr@3.0.0
-  aws-cli: circleci/aws-cli@0.1.9
+  aws-cli: circleci/aws-cli@5.1.1
+  node: circleci/node@6.3.0
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
 
 executors:
@@ -14,7 +14,7 @@ executors:
       - image: "hashicorp/terraform:light"
   docker-dotnet:
     docker:
-      - image: mcr.microsoft.com/dotnet/sdk:6.0
+      - image: mcr.microsoft.com/dotnet/sdk:8.0
 
 references:
   workspace_root: &workspace_root "~"
@@ -66,11 +66,7 @@ commands:
       - *attach_workspace
       - checkout
       - setup_remote_docker
-      - run:
-          name: Install Node.js
-          command: |
-            curl -sL https://deb.nodesource.com/setup_14.x | bash -
-            apt-get update && apt-get install -y nodejs
+      - node/install
       - run:
           name: Install serverless CLI
           command: npm i -g serverless
@@ -84,7 +80,7 @@ commands:
           name: Deploy lambda
           command: |
             cd ./RepairsListener/
-            sls deploy --stage <<parameters.stage>> --conceal
+            npx --yes serverless deploy --stage <<parameters.stage>> --conceal
 
 jobs:
   check-code-formatting:
@@ -155,22 +151,27 @@ jobs:
           stage: "production"
 
 workflows:
-  check-and-deploy-development:
+  check-pull-request:
     jobs:
       - check-code-formatting:
           context: api-nuget-token-context
           filters:
             branches:
-              only: develop
+              ignore:
+                - develop
+                - master
       - build-and-test:
           context: api-nuget-token-context
           filters:
             branches:
-              only: develop
+              ignore:
+                - develop
+                - master
+
+  check-and-deploy-development:
+    jobs:
       - assume-role-development:
           context: api-assume-role-housing-development-context
-          requires:
-            - build-and-test
           filters:
             branches:
               only: develop
@@ -181,77 +182,72 @@ workflows:
             branches:
               only: develop
       - deploy-to-development:
-          context: api-nuget-token-context
+          context:
+            - "Serverless Framework"
+            - api-nuget-token-context
           requires:
             - terraform-init-and-apply-to-development
           filters:
             branches:
               only: develop
+
   check-and-deploy-staging-and-production:
-     jobs:
-     - check-code-formatting:
-         context: api-nuget-token-context
-         filters:
-           branches:
-             only: master
-     - build-and-test:
-         context: api-nuget-token-context
-         filters:
-           branches:
-             only: master
-     - assume-role-staging:
-         context: api-assume-role-staging-context
-         requires:
-             - build-and-test
-         filters:
+    jobs:
+      - assume-role-staging:
+          context: api-assume-role-housing-staging-context
+          filters:
             branches:
               only: master
-     - terraform-init-and-apply-to-staging:
-         requires:
-           - assume-role-staging
-         filters:
-           branches:
-             only: master
-     - deploy-to-staging:
-         context: api-nuget-token-context
-         requires:
-           - terraform-init-and-apply-to-staging
-         filters:
-           branches:
-             only: master
-     - permit-production-terraform-release:
-         type: approval
-         requires:
-           - deploy-to-staging
-         filters:
-           branches:
-             only: master
-     - assume-role-production:
-         context: api-assume-role-housing-production-context
-         requires:
-             - permit-production-terraform-release
-         filters:
+      - terraform-init-and-apply-to-staging:
+          requires:
+            - assume-role-staging
+          filters:
             branches:
               only: master
-     - terraform-init-and-apply-to-production:
-         requires:
-           - assume-role-production
-         filters:
-           branches:
-             only: master
-     - permit-production-release:
-         type: approval
-         requires:
-           - deploy-to-staging
-           - terraform-init-and-apply-to-production
-         filters:
-           branches:
-             only: master
-     - deploy-to-production:
-         context: api-nuget-token-context
-         requires:
-           - permit-production-release
-           - terraform-init-and-apply-to-production
-         filters:
-           branches:
-             only: master
+      - deploy-to-staging:
+          context:
+            - "Serverless Framework"
+            - api-nuget-token-context
+          requires:
+            - terraform-init-and-apply-to-staging
+          filters:
+            branches:
+              only: master
+      - permit-production-terraform-release:
+          type: approval
+          requires:
+            - deploy-to-staging
+          filters:
+            branches:
+              only: master
+      - assume-role-production:
+          context: api-assume-role-housing-production-context
+          requires:
+            - permit-production-terraform-release
+          filters:
+            branches:
+              only: master
+      - terraform-init-and-apply-to-production:
+          requires:
+            - assume-role-production
+          filters:
+            branches:
+              only: master
+      - permit-production-release:
+          type: approval
+          requires:
+            - deploy-to-staging
+            - terraform-init-and-apply-to-production
+          filters:
+            branches:
+              only: master
+      - deploy-to-production:
+          context:
+            - "Serverless Framework"
+            - api-nuget-token-context
+          requires:
+            - permit-production-release
+            - terraform-init-and-apply-to-production
+          filters:
+            branches:
+              only: master
