@@ -1,12 +1,10 @@
 version: 2.1
 
-# orbs that we will use to build our pipeline
 orbs:
   aws-cli: circleci/aws-cli@5.1.1
   node: circleci/node@6.3.0
   aws_assume_role: lbh-hackit/aws_assume_role@0.1.0
 
-# executors that we will use to run our pipeline
 executors:
   docker-python:
     docker:
@@ -18,14 +16,12 @@ executors:
     docker:
       - image: mcr.microsoft.com/dotnet/sdk:8.0
 
-# references that we will use in our pipeline
 references:
   workspace_root: &workspace_root "~"
   attach_workspace: &attach_workspace
     attach_workspace:
       at: *workspace_root
 
-# commands that we will use to build our pipeline
 commands:
   assume-role-and-persist-workspace:
     description: "Assumes deployment role and persists credentials across jobs"
@@ -102,7 +98,6 @@ commands:
             cd ./RepairsListener/
             npx --yes serverless deploy --stage <<parameters.stage>> --conceal
 
-# jobs that we will use to build our pipeline
 jobs:
   check-code-formatting:
     executor: docker-dotnet
@@ -210,20 +205,6 @@ workflows:
               ignore:
                 - develop
                 - master
-      - assume-role-staging:
-          context: api-assume-role-staging-context
-          filters:
-            branches:
-              ignore:
-                - develop
-                - master
-      - assume-role-production:
-          context: api-assume-role-housing-production-context
-          filters:
-            branches:
-              ignore:
-                - develop
-                - master
       - terraform-plan-development:
           requires:
             - assume-role-development
@@ -232,9 +213,27 @@ workflows:
               ignore:
                 - develop
                 - master
+      - assume-role-staging:
+          context: api-assume-role-staging-context
+          requires:
+            - terraform-plan-development
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
       - terraform-plan-staging:
           requires:
             - assume-role-staging
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
+      - assume-role-production:
+          context: api-assume-role-housing-production-context
+          requires:
+            - terraform-plan-staging
           filters:
             branches:
               ignore:
@@ -277,24 +276,24 @@ workflows:
       - assume-role-staging:
           # context: api-assume-role-housing-staging-context
           context: api-assume-role-staging-context
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - terraform-init-and-apply-to-staging:
           requires:
             - assume-role-staging
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - deploy-to-staging:
           context:
             - "Serverless Framework"
             - api-nuget-token-context
           requires:
             - terraform-init-and-apply-to-staging
-          # filters:
-          #   branches:
-          #     only: master
+          filters:
+            branches:
+              only: master
       - permit-production-terraform-release:
           type: approval
           requires:
