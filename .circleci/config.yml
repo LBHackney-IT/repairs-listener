@@ -222,6 +222,7 @@ workflows:
               ignore:
                 - develop
                 - master
+          when: always
       - terraform-plan-staging:
           requires:
             - assume-role-staging
@@ -239,6 +240,7 @@ workflows:
               ignore:
                 - develop
                 - master
+          when: always
       - terraform-plan-production:
           requires:
             - assume-role-production
@@ -274,7 +276,6 @@ workflows:
   check-and-deploy-staging-and-production:
     jobs:
       - assume-role-staging:
-          # context: api-assume-role-housing-staging-context
           context: api-assume-role-staging-context
           filters:
             branches:
