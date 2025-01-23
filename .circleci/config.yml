@@ -295,13 +295,13 @@ workflows:
       #     filters:
       #       branches:
       #         only: master
-      # - permit-production-terraform-release:
-      #     type: approval
-      #     requires:
-      #       - deploy-to-staging
-      #     filters:
-      #       branches:
-      #         only: master
+      - permit-production-terraform-release:
+          type: approval
+          # requires:
+          #   - deploy-to-staging
+          filters:
+            branches:
+              only: master
       - assume-role-production:
           context: api-assume-role-housing-production-context
           requires:
