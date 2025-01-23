@@ -222,10 +222,11 @@ workflows:
               ignore:
                 - develop
                 - master
-          when: always
       - terraform-plan-staging:
           requires:
             - assume-role-staging
+            - terraform-plan-development
+          when: always
           filters:
             branches:
               ignore:
@@ -240,15 +241,17 @@ workflows:
               ignore:
                 - develop
                 - master
-          when: always
       - terraform-plan-production:
           requires:
             - assume-role-production
+            - terraform-plan-staging
+          when: always
           filters:
             branches:
               ignore:
                 - develop
                 - master
+
 
   check-and-deploy-development:
     jobs:
