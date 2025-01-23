@@ -226,7 +226,6 @@ workflows:
           requires:
             - assume-role-staging
             - terraform-plan-development
-          when: always
           filters:
             branches:
               ignore:
@@ -245,7 +244,6 @@ workflows:
           requires:
             - assume-role-production
             - terraform-plan-staging
-          when: always
           filters:
             branches:
               ignore:
