@@ -250,7 +250,6 @@ workflows:
                 - develop
                 - master
 
-
   check-and-deploy-development:
     jobs:
       - assume-role-development:
