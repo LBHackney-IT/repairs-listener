@@ -130,3 +130,30 @@ resource "aws_ssm_parameter" "repairshubinbound_sqs_queue_arn" {
   type  = "String"
   value = aws_sqs_queue.repairshubinbound_queue.arn
 }
+
+module "postgres_db_production" {
+  source = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/database/postgres"
+  environment_name = "production"
+  vpc_id = data.aws_vpc.production_vpc.id
+  db_identifier = "repairs-dr"
+  db_name = "repairs_db"
+  db_port  = 5830
+  subnet_ids = data.aws_subnet_ids.production.ids
+  db_engine = "postgres"
+  db_engine_version = "16.8"
+  db_parameter_group_name = "postgres16"
+  db_allow_major_version_upgrade = true
+  db_instance_class = "db.t3.medium"
+  db_allocated_storage = 100
+  maintenance_window = "sun:01:00-sun:01:30"
+  db_username = data.aws_ssm_parameter.repairs_postgres_username.value
+  db_password = data.aws_ssm_parameter.repairs_postgres_db_password.value
+  storage_encrypted = true
+  multi_az = true //only true if production deployment
+  publicly_accessible = false
+  project_name = "repairs hub"
+  additional_tags = {
+    BackupPolicy = "Prod"
+  }
+  snapshot_identifier = "awsbackup:copyjob-25b5405a-c3de-4381-8f27-76e80426ccdd"
+}
