@@ -58,9 +58,9 @@ resource "aws_sns_topic" "asset" {
 #   overwrite = true
 # }
 
-data "aws_ssm_parameter" "assets_sns_topic_arn" {
-   name = "/sns-topic/production/asset/arn"
-}
+# data "aws_ssm_parameter" "assets_sns_topic_arn" {
+#    name = "/sns-topic/production/asset/arn"
+# }
 
 ### This is the definition of the dead letter queue used whem message processsing fails for a given message
 
