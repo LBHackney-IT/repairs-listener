@@ -55,6 +55,7 @@ resource "aws_ssm_parameter" "asset_sns_arn" {
   name  = "/sns-topic/production/asset/arn"
   type  = "String"
   value = aws_sns_topic.asset.arn
+  overwrite = true
 }
 
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
