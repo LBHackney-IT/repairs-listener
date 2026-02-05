@@ -131,6 +131,29 @@ resource "aws_ssm_parameter" "repairshubinbound_sqs_queue_arn" {
   value = aws_sqs_queue.repairshubinbound_queue.arn
 }
 
+/*    POSTGRES SET UP    */
+data "aws_vpc" "production_vpc" {
+  tags = {
+    # Name = "housing-prod"
+    Name = "disaster-recovery-prod"
+  }
+}
+data "aws_subnet_ids" "production" {
+  vpc_id = data.aws_vpc.production_vpc.id
+  filter {
+    name   = "tag:Type"
+    values = ["private"]
+  }
+}
+
+ data "aws_ssm_parameter" "repairs_postgres_db_password" {
+   name = "/repairs-api/production/postgres-password"
+ }
+
+ data "aws_ssm_parameter" "repairs_postgres_username" {
+   name = "/repairs-api/production/postgres-username"
+ }
+
 module "postgres_db_production" {
   source = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/database/postgres"
   environment_name = "production"
