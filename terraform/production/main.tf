@@ -51,12 +51,12 @@ resource "aws_sns_topic" "asset" {
   kms_master_key_id           = "alias/aws/sns"
 }
 
-resource "aws_ssm_parameter" "asset_sns_arn" {
-  name  = "/sns-topic/production/asset/arn"
-  type  = "String"
-  value = aws_sns_topic.asset.arn
-  overwrite = true
-}
+# resource "aws_ssm_parameter" "asset_sns_arn" {
+#   name  = "/sns-topic/production/asset/arn"
+#   type  = "String"
+#   value = aws_sns_topic.asset.arn
+#   overwrite = true
+# }
 
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
    name = "/sns-topic/production/asset/arn"
@@ -104,7 +104,7 @@ resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
           "Resource": "${aws_sqs_queue.repairshubinbound_queue.arn}",
           "Condition": {
           "ArnEquals": {
-              "aws:SourceArn": "${data.aws_ssm_parameter.assets_sns_topic_arn.value}"
+              "aws:SourceArn": "${aws_sns_topic.asset.arn}"
           }
           }
       }
@@ -116,7 +116,7 @@ resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
 ### This is the subscription definition that tells the topic which queue to use
 
 resource "aws_sns_topic_subscription" "repairshubinbound_queue_subscribe_to_assets_sns" {
-   topic_arn = data.aws_ssm_parameter.assets_sns_topic_arn.value
+   topic_arn = aws_sns_topic.asset.arn
    protocol  = "sqs"
    endpoint  = aws_sqs_queue.repairshubinbound_queue.arn
    raw_message_delivery = true
