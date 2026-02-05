@@ -42,6 +42,21 @@ terraform {
 ### This is the parameter containing the arn of the topic to which we want to subscribe
 ### This will have been created by the service the generates the events in which we are interested
 
+
+# Add missing sns topic
+resource "aws_sns_topic" "asset" {
+  name                        = "asset.fifo"
+  fifo_topic                  = true
+  content_based_deduplication = true
+  kms_master_key_id           = "alias/aws/sns"
+}
+
+resource "aws_ssm_parameter" "asset_sns_arn" {
+  name  = "/sns-topic/production/asset/arn"
+  type  = "String"
+  value = aws_sns_topic.asset.arn
+}
+
 data "aws_ssm_parameter" "assets_sns_topic_arn" {
    name = "/sns-topic/production/asset/arn"
 }
