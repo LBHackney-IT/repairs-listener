@@ -125,11 +125,6 @@ jobs:
     steps:
       - assume-role-and-persist-workspace:
           aws-account: $AWS_ACCOUNT_DEVELOPMENT
-  # assume-role-staging:
-  #   executor: docker-python
-  #   steps:
-  #     - assume-role-and-persist-workspace:
-  #         aws-account: $AWS_ACCOUNT_STAGING
   assume-role-production:
     executor: docker-python
     steps:
@@ -140,11 +135,6 @@ jobs:
     steps:
       - terraform-plan:
           environment: "development"
-  # terraform-plan-staging:
-  #   executor: docker-terraform
-  #   steps:
-  #     - terraform-plan:
-  #         environment: "staging"
   terraform-plan-production:
     executor: docker-terraform
     steps:
@@ -155,11 +145,6 @@ jobs:
     steps:
       - terraform-init-then-apply:
           environment: "development"
-  # terraform-init-and-apply-to-staging:
-  #   executor: docker-terraform
-  #   steps:
-  #     - terraform-init-then-apply:
-  #         environment: "staging"
   terraform-init-and-apply-to-production:
     executor: docker-terraform
     steps:
@@ -170,11 +155,6 @@ jobs:
     steps:
       - deploy-lambda:
           stage: "development"
-  # deploy-to-staging:
-  #   executor: docker-dotnet
-  #   steps:
-  #     - deploy-lambda:
-  #         stage: "staging"
   deploy-to-production:
     executor: docker-dotnet
     steps:
@@ -213,24 +193,6 @@ workflows:
               ignore:
                 - develop
                 - master
-      # - assume-role-staging:
-      #     context: api-assume-role-housing-staging-context
-      #     requires:
-      #       - terraform-plan-development
-      #     filters:
-      #       branches:
-      #         ignore:
-      #           - develop
-      #           - master
-      # - terraform-plan-staging:
-      #     requires:
-      #       - assume-role-staging
-      #       - terraform-plan-development
-      #     filters:
-      #       branches:
-      #         ignore:
-      #           - develop
-      #           - master
       - assume-role-production:
           context: api-assume-role-housing-production-context
           requires:
@@ -275,30 +237,8 @@ workflows:
 
   check-and-deploy-staging-and-production:
     jobs:
-      # - assume-role-staging:
-      #     context: api-assume-role-staging-context
-      #     filters:
-      #       branches:
-      #         only: master
-      # - terraform-init-and-apply-to-staging:
-      #     requires:
-      #       - assume-role-staging
-      #     filters:
-      #       branches:
-      #         only: master
-      # - deploy-to-staging:
-      #     context:
-      #       - "Serverless Framework"
-      #       - api-nuget-token-context
-      #     requires:
-      #       - terraform-init-and-apply-to-staging
-      #     filters:
-      #       branches:
-      #         only: master
       - permit-production-terraform-release:
           type: approval
-          # requires:
-          #   - deploy-to-staging
           filters:
             branches:
               only: master
@@ -318,7 +258,6 @@ workflows:
       - permit-production-release:
           type: approval
           requires:
-            # - deploy-to-staging
             - terraform-init-and-apply-to-production
           filters:
             branches:
