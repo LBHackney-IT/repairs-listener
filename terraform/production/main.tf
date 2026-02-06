@@ -30,7 +30,7 @@ locals {
 
 terraform {
   backend "s3" {
-    bucket  = "terraform-state-housing-production"
+    bucket  = "terraform-state-disaster-recovery"
     encrypt = true
     region  = "eu-west-2"
     key     = "services/repairs-listener/state"
@@ -42,9 +42,25 @@ terraform {
 ### This is the parameter containing the arn of the topic to which we want to subscribe
 ### This will have been created by the service the generates the events in which we are interested
 
-data "aws_ssm_parameter" "assets_sns_topic_arn" {
-   name = "/sns-topic/production/asset/arn"
+
+# Add missing sns topic
+resource "aws_sns_topic" "asset" {
+  name                        = "asset.fifo"
+  fifo_topic                  = true
+  content_based_deduplication = true
+  kms_master_key_id           = "alias/aws/sns"
 }
+
+# resource "aws_ssm_parameter" "asset_sns_arn" {
+#   name  = "/sns-topic/production/asset/arn"
+#   type  = "String"
+#   value = aws_sns_topic.asset.arn
+#   overwrite = true
+# }
+
+# data "aws_ssm_parameter" "assets_sns_topic_arn" {
+#    name = "/sns-topic/production/asset/arn"
+# }
 
 ### This is the definition of the dead letter queue used whem message processsing fails for a given message
 
@@ -88,7 +104,7 @@ resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
           "Resource": "${aws_sqs_queue.repairshubinbound_queue.arn}",
           "Condition": {
           "ArnEquals": {
-              "aws:SourceArn": "${data.aws_ssm_parameter.assets_sns_topic_arn.value}"
+              "aws:SourceArn": "${aws_sns_topic.asset.arn}"
           }
           }
       }
@@ -100,7 +116,7 @@ resource "aws_sqs_queue_policy" "repairshubinbound_queue_policy" {
 ### This is the subscription definition that tells the topic which queue to use
 
 resource "aws_sns_topic_subscription" "repairshubinbound_queue_subscribe_to_assets_sns" {
-   topic_arn = data.aws_ssm_parameter.assets_sns_topic_arn.value
+   topic_arn = aws_sns_topic.asset.arn
    protocol  = "sqs"
    endpoint  = aws_sqs_queue.repairshubinbound_queue.arn
    raw_message_delivery = true
@@ -113,4 +129,54 @@ resource "aws_ssm_parameter" "repairshubinbound_sqs_queue_arn" {
   name  = "/sqs-queue/production/repairshubinbound/arn"
   type  = "String"
   value = aws_sqs_queue.repairshubinbound_queue.arn
+}
+
+/*    POSTGRES SET UP    */
+data "aws_vpc" "production_vpc" {
+  tags = {
+    # Name = "housing-prod"
+    Name = "disaster-recovery-prod"
+  }
+}
+data "aws_subnet_ids" "production" {
+  vpc_id = data.aws_vpc.production_vpc.id
+  filter {
+    name   = "tag:Type"
+    values = ["private"]
+  }
+}
+
+ data "aws_ssm_parameter" "repairs_postgres_db_password" {
+   name = "/repairs-api/production/postgres-password"
+ }
+
+ data "aws_ssm_parameter" "repairs_postgres_username" {
+   name = "/repairs-api/production/postgres-username"
+ }
+
+module "postgres_db_production" {
+  source = "github.com/LBHackney-IT/aws-hackney-common-terraform.git//modules/database/postgres"
+  environment_name = "production"
+  vpc_id = data.aws_vpc.production_vpc.id
+  db_identifier = "repairs-dr"
+  db_name = "repairs_db"
+  db_port  = 5830
+  subnet_ids = data.aws_subnet_ids.production.ids
+  db_engine = "postgres"
+  db_engine_version = "16.8"
+  db_parameter_group_name = "postgres16"
+  db_allow_major_version_upgrade = true
+  db_instance_class = "db.t3.medium"
+  db_allocated_storage = 100
+  maintenance_window = "sun:01:00-sun:01:30"
+  db_username = data.aws_ssm_parameter.repairs_postgres_username.value
+  db_password = data.aws_ssm_parameter.repairs_postgres_db_password.value
+  storage_encrypted = true
+  multi_az = true //only true if production deployment
+  publicly_accessible = false
+  project_name = "repairs hub"
+  additional_tags = {
+    BackupPolicy = "Prod"
+  }
+  snapshot_identifier = "awsbackup:copyjob-25b5405a-c3de-4381-8f27-76e80426ccdd"
 }
