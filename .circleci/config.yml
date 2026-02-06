@@ -120,7 +120,7 @@ commands:
       - run:
           name: Remove lambda
           command: |
-            cd ./BonusCalcListener/
+            cd ./RepairsListener/
             npx --yes serverless remove --stage <<parameters.stage>> --conceal
 
 jobs:
