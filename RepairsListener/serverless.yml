@@ -25,8 +25,6 @@ functions:
     handler: RepairsListener::RepairsListener.SqsFunction::FunctionHandler
     role: lambdaExecutionRole
     environment:
-      ### Re-use the same parameter as used by web api applications
-      ENVIRONMENT:  ${ssm:/housing-tl/${self:provider.stage}/aspnetcore-environment}
       REPAIRS_DB_CONNECTION_STRING: Host=${ssm:/repairs-api/${self:provider.stage}/postgres-hostname};Port=${ssm:/repairs-api/${self:provider.stage}/postgres-port};Database=${ssm:/repairs-api/${self:provider.stage}/postgres-database};Username=${ssm:/repairs-api/${self:provider.stage}/postgres-username};Password=${ssm:/repairs-api/${self:provider.stage}/postgres-password}
     events:
       ### Specify the parameter containing the queue arn used to trigget the lambda function here
